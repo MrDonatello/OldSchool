@@ -1,0 +1,690 @@
+                           Командная строка
+
+В своём домашнем каталоге создать подкаталог linux_ex и зайти в него.
+
+andrey@andrey-Satellite-C850-D3K:~$ mkdir linux_ex
+andrey@andrey-Satellite-C850-D3K:~$ cd linux_ex/
+_________________________________________________________________________________________________
+Создать файл hello.txt  с текстом “Hello world”.
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo "Hello World" > hello.txt
+__________________________________________________________________________________________________
+Добавить в этот файл (разделяя пустыми строками)
+свои имя и фамилию, 
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo "Синицын Андрей" > hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+текущую дату
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo $(date +"%y-%m-%d") >> hello.txt
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+имя пользователя
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo "andrey" >> hello.txt
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+содержимое домашнего каталога (нерекурсивно, список имен файлов, включая скрытые)
+
+andrey@andrey-Satellite-C850-D3K:~$ ls -a >> linux_ex/hello.txt
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+содержимое корневого каталога (нерекурсивно)
+
+andrey@andrey-Satellite-C850-D3K:~$ ls -a / >> linux_ex/hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+содержимое каталога /etc
+
+andrey@andrey-Satellite-C850-D3K:/etc$ ls -a >> /home/andrey/linux_ex/hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+только файлы в каталоге /etc  
+
+andrey@andrey-Satellite-C850-D3K:/etc$ find . -maxdepth 1  -type f  >>/home/andrey/linux_ex/hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+только подкаталоги в каталоге /etc (нерекурсивно)
+
+andrey@andrey-Satellite-C850-D3K:/etc$  find . -maxdepth 1 -type d >>/home/andrey/linux_ex/hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+содержимое файла /etc/passwd
+
+andrey@andrey-Satellite-C850-D3K:/etc$ cat passwd >> /home/andrey/linux_ex/hello.txt
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt  __________________________________________________________________________________________________
+первый столбец файла /etc/passwd (список юзеров)
+
+andrey@andrey-Satellite-C850-D3K:/etc$ cut passwd -d: -f1 >> /home/andrey/linux_ex/hello.txt
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+содержимое файла /etc/group
+
+andrey@andrey-Satellite-C850-D3K:/etc$ cat group >> /home/andrey/linux_ex/hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+первый столбец файла /etc/group (список групп)
+andrey@andrey-Satellite-C850-D3K:/etc$ cut group -d: -f1 >> /home/andrey/linux_ex/hello.txt 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ echo >> hello.txt 
+__________________________________________________________________________________________________
+Вывести hello.txt с прокруткой
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ less hello.txt
+__________________________________________________________________________________________________
+Разбить hello.txt на файлы размером 1к, затем собрать обратно.
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ split -b 1k hello.txt; cat x* > NEW_hello.txt
+__________________________________________________________________________________________________
+Заменить в hello.txt ‘/’ на ‘\’
+
+andrey@andrey-Satellite-C850-D3K:~$ sed 's/\//\\/g' /home/andrey/linux_ex/hello.txt 
+__________________________________________________________________________________________________
+Скопировать /var/log в текущий каталог (кроме файлов без доступа) с сохранением времени модификации.
+
+andrey@andrey-Satellite-C850-D3K:/var$ cp -rp log /home/andrey/linux_ex/
+__________________________________________________________________________________________________
+вывести объем занимаемого места
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ du -sh log/
+__________________________________________________________________________________________________
+вывести все файлы, начинающиеся на ‘a’ (не каталоги)
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex/log$ find . -type f  -name 'a*'
+__________________________________________________________________________________________________
+удалить все файлы, начинающиеся на ‘a’ (не каталоги).
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex/log$ find . -type f -name 'a*' -exec rm -r {} \;
+
+Как убедиться, что выполнено правильно?
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex/log$ find . -type f  -name 'a*'
+__________________________________________________________________________________________________
+вывести все файлы со временем последней модификации больше 5 дней
+
+andrey@andrey-Satellite-C850-D3K:~$ find . -type f  -mtime +5 -print
+_________________________________________________________________________________________________
+вывести все файлы со временем последней модификации меньше 5 дней;
+
+andrey@andrey-Satellite-C850-D3K:~$ find . -type f  -mtime -5 -print
+_________________________________________________________________________________________________
+создать каталог archive и переместить туда файлы (не каталоги) со временем модификации больше 5 дней.
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ mkdir /home/andrey/linux_ex/archive; mv $(find . -type f  -mtime +5)  /home/andrey/linux_ex/archive/
+_________________________________________________________________________________________________
+* переместить файлы как в прошлом задании, но сохраняя структуру каталогов.
+ 
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ mkdir /home/andrey/linux_ex/archive; find . -type f -mtime +5 -not -path "/home/andrey/linux_ex/archive*" -exec cp -rp --parents {} /home/andrey/linux_ex/archive \; -delete
+________________________________ИЛИ
+
+Поиск и копирование сохраняя структуру каталогов, но не сохраняя данные о последней модификации файлов. 
+
+andrey@andrey-Satellite-C850-D3K:~$ mkdir /home/andrey/linux_ex/archive; cp -r --parents $(find . -type f -mtime +5) /home/andrey/linux_ex/archive
+
+         Поиск и удаление исходников (со старыми данными о модификации)
+
+ find . -type f -mtime +5 -exec rm {} \;
+_____________________________________________________________________________________________
+Найти все файлы (рекурсивно) с расширением jar в каталогах /opt и /usr.
+andrey@andrey-Satellite-C850-D3K:~$ find /opt /usr/  -type f -name "*.jar"
+_____________________________________________________________________________________________
+Найти все каталоги, содержащие файлы с расширением jar в каталогах /opt и /usr, вывести по одному разу.
+                            поиск каталогов и сохранение их в файл.
+andrey@andrey-Satellite-C850-D3K:~$ find /opt /usr/ -type f -name "*.jar" -exec dirname {}  >> /home/andrey/linux_ex/test.txt \;
+                            вывод каталогов по одному разу.
+andrey@andrey-Satellite-C850-D3K:~$ uniq /home/andrey/linux_ex/test.txt
+_____________________________________________________________________________________________
+Найти все файлы с расширением java, созданные месяц назад плюс-минус одна неделя.
+
+andrey@andrey-Satellite-C850-D3K:~$ find . -type f -name "*.java" -newerct 2018-12-22 ! -newerct 2019-01-05 
+_____________________________________________________________________________________________
+В двух заданных каталогах должен быть одинаковый набор файлов. Нужно в этом убедиться, т.е. проверить, что совпадают множества файлов, имена и содержимое.
+
+andrey@andrey-Satellite-C850-D3K:~$ diff -r /home/andrey/linux_ex/1 /home/andrey/linux_ex/2 > /home/andrey/linux_ex/changes.diff
+_____________________________________________________________________________________________
+Установить вручную (без apt-get) java 8 и maven последней версии . Добавить путь запуска в переменную PATH, создать переменную M2_HOME. Выполнить сборку java проекта.
+                            
+andrey@andrey-Satellite-C850-D3K:/opt$ sudo tar xzvf /home/andrey/Загрузки/jdk-8u201-linux-x64.tar.gz jdk1.8.0_201/
+
+andrey@andrey-Satellite-C850-D3K:/opt$ sudo update-alternatives --install "/usr/bin/java" "java" "/opt/jdk1.8.0_201/bin/java" 1
+
+andrey@andrey-Satellite-C850-D3K:/opt$ sudo update-alternatives --set java /opt/jdk1.8.0_201/bin/java
+
+andrey@andrey-Satellite-C850-D3K:/opt$ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_201/bin/javac 1
+
+andrey@andrey-Satellite-C850-D3K:/opt$ sudo update-alternatives --set javac /opt/jdk1.8.0_201/bin/javac
+
+andrey@andrey-Satellite-C850-D3K:/opt$ sudo tar xzvf /home/andrey/Загрузки/apache-maven-3.6.0-bin.tar.gz 
+
+andrey@andrey-Satellite-C850-D3K:~$ sudo vim /etc/bash.bashrc
+export JAVA_HOME=/opt/jdk1.8.0_201
+xport M2_HOME=/opt/apache-maven-3.6.0
+export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+
+andrey@andrey-Satellite-C850-D3K:~$ source /etc/bash.bashrc 
+
+____________________________________проверка java
+andrey@andrey-Satellite-C850-D3K:~$ java -version
+java version "1.8.0_201"
+Java(TM) SE Runtime Environment (build 1.8.0_201-b09)
+Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
+___________________________________проверка maven
+andrey@andrey-Satellite-C850-D3K:~$ mvn -version
+Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-25T00:41:47+06:00)
+Maven home: /opt/apache-maven-3.6.0
+Java version: 1.8.0_201, vendor: Oracle Corporation, runtime: /opt/jdk1.8.0_201/jre
+Default locale: ru_RU, platform encoding: UTF-8
+OS name: "linux", version: "4.15.0-44-generic", arch: "amd64", family: "unix"
+
+_______________________________________сборка
+andrey@andrey-Satellite-C850-D3K:~/test$ mvn compile
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com:hello-world >---------------------------
+[INFO] Building hello-world 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ hello-world ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /home/andrey/test/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ hello-world ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to /home/andrey/test/target/classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.565 s
+[INFO] Finished at: 2019-01-30T21:43:53+06:00
+
+__________________________________________запуск__________________________________________________________________
+
+andrey@andrey-Satellite-C850-D3K:~/test$ mvn exec:java -Dexec.mainClass="com.app.HelloWorld"
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com:hello-world >---------------------------
+[INFO] Building hello-world 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:java (default-cli) @ hello-world ---
+Hello world
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.949 s
+[INFO] Finished at: 2019-01-30T21:47:43+06:00
+[INFO] ------------------------------------------------------------------------
+____________________________________________________________________________________________________________________
+Проанализировать загрузку процессора, объем памяти. Вывести информацию по использованию места в файловой системе. Найти самые большие каталоги (рекурсивно до уровня 2).
+
+andrey@andrey-Satellite-C850-D3K:~/test$ top 
+andrey@andrey-Satellite-C850-D3K:~/test$ free -h
+andrey@andrey-Satellite-C850-D3K:/$ du -h --max-depth 2| sort -h
+____________________________________________________________________________________________________________________
+                                Users, groups, access rights
+
+Создать двух юзеров (напр., ivanov, petrov), создать каталог /shared и дать полный доступ этим двум юзерам. У остальных не должно быть доступа даже на чтение.
+
+andrey@andrey-Satellite-C850-D3K:/$ sudo adduser --no-create-home petrov
+andrey@andrey-Satellite-C850-D3K:/$ sudo adduser --no-create-home ivanov
+andrey@andrey-Satellite-C850-D3K:/$ sudo mkdir shared
+andrey@andrey-Satellite-C850-D3K:/$ sudo addgroup newgroup
+andrey@andrey-Satellite-C850-D3K:/$ sudo gpasswd -a ivanov newgroup 
+andrey@andrey-Satellite-C850-D3K:/$ sudo gpasswd -a petrov newgroup
+andrey@andrey-Satellite-C850-D3K:/$ sudo chown -R andrey:newgroup /shared/
+andrey@andrey-Satellite-C850-D3K:/$ sudo chmod 070 /shared/
+____________________________________________________________________________________________________________________
+                                    Pipes
+
+Установить MySQL и создать базу ttschool, заполнить данными. Выполнить дамп базы в файл посредством pipe, затем восстановить из файла.
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ mkfifo mysql_pipe
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ mysqldump -uroot -proot ttschool > mysql_pipe & gzip -9 -c < mysql_pipe > tt_dump.gz | rm mysql_pipe
+
+andrey@andrey-Satellite-C850-D3K:~/linux_ex$ gzip -dc tt_dump.gz | mysql -u root -p ttschool
+
+
+
+
+
+
+
+_______________________ЗАДАНИЕ2______________________________________________________________________________________
+Запустить виртуальную машину, зайти по ssh.
+andrey@andrey-Satellite-C850-D3K:~$ ssh andrey@169.254.8.86
+____________________________________________________________________________________________________________________
+Сгенерировать пару ключей и настроить по ним доступ. Приватный ключ защитить паролем.
+andrey@andrey-Satellite-C850-D3K:~$ ssh-keygen
+
+andrey@andrey-Satellite-C850-D3K:~$ scp ~/.ssh/id_rsa.pub andrey@192.168.0.108:~/.ssh/authorized_keys
+andrey@andrey-Satellite-C850-D3K:~$ ssh andrey@192.168.0.108
+
+andrey@andrey-Satellite-C850-D3K:~$ scp ~/.ssh/id_rsa.pub andrey@192.168.0.109:~/.ssh/authorized_keys
+andrey@andrey-Satellite-C850-D3K:~$ ssh andrey@192.168.0.109
+____________________________________________________________________________________________________________________
+Средствами iptables на машине SERVER закрыть SSH (порт 22) для всех входящих запросов кроме тех, которые пришли с GATEWAY.
+andrey@SERVER:~$ sudo iptables -I INPUT -p tcp -s 192.168.0.108 --dport 22 -j ACCEPT
+andrey@SERVER:~$ sudo iptables -A INPUT -p tcp --dport 22 -j REJECT
+____________________________________________________________________________________________________________________
+С помощью ssh-agent настроить доступ с WORKSTATION на SERVER через промежуточный сервер GATEWAY.
+
+andrey@andrey-Satellite-C850-D3K:~$ eval $(ssh-agent -s) && ssh-add ~/.ssh/id_rsa
+andrey@andrey-Satellite-C850-D3K:~$ ssh -A -tt andrey@192.168.0.108 ssh andrey@192.168.0.109
+
+_________________Для автозапуска правил
+andrey@SERVER:~$ sudo apt-get install iptables-persistent
+andrey@SERVER:~$ sudo systemctl enable netfilter-persistent
+andrey@SERVER:~$ sudo systemctl start netfilter-persistent
+____________________________________________________________________________________________________________________
+Скопировать на сервер приложение webhelloworld (jar файл) и запустить
+
+копирование призводил через mc shell-соединение
+
+andrey@SERVER:~$ cd /home/andrey/WebHelloWorld/target/
+andrey@SERVER:~/WebHelloWorld/target$ java -jar WebHelloWorld.jar
+____________________________________________________________________________________________________________________
+Выполнить в двух вариантах, с помощью команды screen 
+
+andrey@SERVER:~$ screen -S "hello"
+andrey@SERVER:~$ cd /home/andrey/WebHelloWorld/target/
+andrey@SERVER:~/WebHelloWorld/target$ java -jar WebHelloWorld.jar
+Ctrl-A d  выход
+
+___________и в виде службы systemd.
+
+Разместил jar в /opt/HelloWorldServer/ --через mc shell-соединение
+
+Создал helloworld.service в /etc/systemd/system
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+[Unit]
+Description=Helloworld service
+[Service]
+Type=simple
+User=andrey
+ExecStart=/opt/jdk1.8.0_201/bin/java -jar /opt/HelloWorldServer/WebHelloWorld.jar
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+///////////////////////////////////////////////////////////////////////////////////
+
+andrey@SERVER:~$sudo systemctl daemon-reload
+andrey@SERVER:~$sudo systemctl enable helloworld.service
+andrey@SERVER:~$sudo systemctl status helloworld
+//////////////////////////////////////////////////////////////////////////////////
+sudo: unable to resolve host SERVER
+[sudo] пароль для andrey: 
+● helloworld.service - Helloworld service
+   Loaded: loaded (/etc/systemd/system/helloworld.service; enabled; vendor prese
+   Active: active (running) since Mon 2019-02-04 18:22:05 +06; 35min ago
+ Main PID: 307 (java)
+   CGroup: /system.slice/helloworld.service
+           └─307 /usr/bin/java -jar /opt/HelloWorldServer/WebHelloWorld.jar
+
+фев 04 18:22:05 SERVER systemd[1]: Started Helloworld service.
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.util.log - L
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO spark.embeddedserver.jetty.Emb
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO spark.embeddedserver.jetty.Emb
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Serve
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.sessi
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.sessi
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.sessi
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Abstr
+фев 04 18:22:29 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Serve
+lines 1-17/17 (END)
+/////////////////////////////////////////////////////////////////////////////////
+
+____________________________________________________________________________________________________________________
+Запустить journalctl для просмотра логов.
+
+andrey@SERVER:~$ sudo journalctl -u helloworld
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+sudo: unable to resolve host SERVER
+-- Logs begin at Tue 2019-02-05 03:39:18 +06, end at Tue 2019-02-05 04:13:34 +06
+фев 05 09:39:23 SERVER systemd[1]: Started Helloworld service.
+фев 05 09:39:35 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.util.log - L
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO spark.embeddedserver.jetty.Emb
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO spark.embeddedserver.jetty.Emb
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Serve
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.sessi
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.sessi
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.sessi
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Abstr
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Serve
+фев 05 09:12:21 SERVER java[307]: [qtp1179602465-10] INFO net.thumbtack.web.hell
+фев 05 09:12:21 SERVER java[307]: [qtp1179602465-11] INFO spark.http.matching.Ma
+фев 05 09:12:36 SERVER java[307]: [qtp1179602465-13] INFO net.thumbtack.web.hell
+фев 05 09:12:38 SERVER java[307]: [qtp1179602465-14] INFO net.thumbtack.web.hell
+lines 1-15/15 (END)...skipping...
+-- Logs begin at Tue 2019-02-05 09:39:18 +06, end at Tue 2019-02-05 10:13:34 +06. --
+фев 05 09:39:23 SERVER systemd[1]: Started Helloworld service.1
+фев 05 09:39:35 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.util.log - Logging initialized @9871ms to org.eclipse.jetty.util.log.Slf4j
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO spark.embeddedserver.jetty.EmbeddedJettyServer - == Spark has ignited ...
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO spark.embeddedserver.jetty.EmbeddedJettyServer - >> Listening on 0.0.0.0:4567
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Server - jetty-9.4.z-SNAPSHOT
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.session - Scavenging every 660000ms
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@5b3396c7{HTTP/1.1,[http
+фев 05 09:39:36 SERVER java[307]: [Thread-0] INFO org.eclipse.jetty.server.Server - Started @11905ms
+фев 05 10:12:21 SERVER java[307]: [qtp1179602465-10] INFO net.thumbtack.web.helloworld.HelloWorld - Request received from 192.168.0.106
+фев 05 10:12:21 SERVER java[307]: [qtp1179602465-11] INFO spark.http.matching.MatcherFilter - The requested route [/favicon.ico] has not been 
+фев 05 10:12:36 SERVER java[307]: [qtp1179602465-13] INFO net.thumbtack.web.helloworld.HelloWorld - Request received from 192.168.0.106
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+____________________________________________________________________________________________________________________
+
+Запустить WebHelloWorld и проанализировать запросы и ответы с помощью tcpdump  и ngrep.
+
+andrey@SERVER:~$ sudo tcpdump  port 4567 -vv
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+19:59:32.503460 IP (tos 0x0, ttl 64, id 40737, offset 0, flags [DF], proto TCP (6), length 60)
+    192.168.0.106.49744 > 192.168.0.109.4567: Flags [S], cksum 0xb905 (correct), seq 290553073, win 29200, options [mss 1460,sackOK,TS val 1986904554 ecr 0,nop,wscale 7], length 0
+19:59:32.503510 IP (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP (6), length 60)
+    192.168.0.109.4567 > 192.168.0.106.49744: Flags [S.], cksum 0x8256 (incorrect -> 0x69fc), seq 3386420805, ack 290553074, win 28960, options [mss 1460,sackOK,TS val 186311 ecr 1986904554,nop,wscale 7], length 0
+19:59:32.503586 IP (tos 0x0, ttl 64, id 40738, offset 0, flags [DF], proto TCP (6), length 52)
+    192.168.0.106.49744 > 192.168.0.109.4567: Flags [.], cksum 0x0904 (correct), seq 1, ack 1, win 229, options [nop,nop,TS val 1986904554 ecr 186311], length 0
+19:59:32.503790 IP (tos 0x0, ttl 64, id 40739, offset 0, flags [DF], proto TCP (6), length 441)
+    192.168.0.106.49744 > 192.168.0.109.4567: Flags [P.], cksum 0x2179 (correct), seq 1:390, ack 1, win 229, options [nop,nop,TS val 1986904554 ecr 186311], length 389
+19:59:32.503808 IP (tos 0x0, ttl 64, id 31105, offset 0, flags [DF], proto TCP (6), length 52)
+    192.168.0.109.4567 > 192.168.0.106.49744: Flags [.], cksum 0x824e (incorrect -> 0x0779), seq 1, ack 390, win 235, options [nop,nop,TS val 186311 ecr 1986904554], length 0
+19:59:32.509925 IP (tos 0x0, ttl 64, id 31106, offset 0, flags [DF], proto TCP (6), length 220)
+    192.168.0.109.4567 > 192.168.0.106.49744: Flags [P.], cksum 0x82f6 (incorrect -> 0x4e96), seq 1:169, ack 390, win 235, options [nop,nop,TS val 186313 ecr 1986904554], length 168
+19:59:32.510078 IP (tos 0x0, ttl 64, id 40740, offset 0, flags [DF], proto TCP (6), length 52)
+    192.168.0.106.49744 > 192.168.0.109.4567: Flags [.], cksum 0x06c7 (correct), seq 390, ack 169, win 237, options [nop,nop,TS val 1986904560 ecr 186313], length 0
+19:59:32.510529 IP (tos 0x0, ttl 64, id 31107, offset 0, flags [DF], proto TCP (6), length 59)
+    192.168.0.109.4567 > 192.168.0.106.49744: Flags [P.], cksum 0x8255 (incorrect -> 0xb595), seq 169:176, ack 390, win 235, options [nop,nop,TS val 186313 ecr 1986904560], length 7
+19:59:32.510647 IP (tos 0x0, ttl 64, id 40741, offset 0, flags [DF], proto TCP (6), length 52)
+    192.168.0.106.49744 > 192.168.0.109.4567: Flags [.], cksum 0x06bf (correct), seq 390, ack 176, win 237, options [nop,nop,TS val 1986904561 ecr 186313], length 0
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+andrey@SERVER:~$ sudo ngrep -d any -W byline port 4567
+
+открытие через workstation mozilla (http://192.168.0.109:4567/hello)
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+sudo: unable to resolve host SERVER
+interface: any
+filter: (ip or ip6) and ( port 4567 )
+####
+T 192.168.0.106:49786 -> 192.168.0.109:4567 [AP]
+GET /hello HTTP/1.1.
+Host: 192.168.0.109:4567.
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0.
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8.
+Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3.
+Accept-Encoding: gzip, deflate.
+Connection: keep-alive.
+Upgrade-Insecure-Requests: 1.
+Cache-Control: max-age=0.
+.
+
+##
+T 192.168.0.109:4567 -> 192.168.0.106:49786 [AP]
+HTTP/1.1 200 OK.
+Date: Tue, 05 Feb 2019 14:03:44 GMT.
+Content-Type: text/html;charset=utf-8.
+Transfer-Encoding: chunked.
+Server: Jetty(9.4.z-SNAPSHOT).
+.
+B.
+Hello World
+##
+T 192.168.0.109:4567 -> 192.168.0.106:49786 [AP]
+.
+0.
+.
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+____________________________________________________________________________________________________________________
+Установить web сервер nginx (без Docker),
+
+andrey@SERVER:~$ sudo apt install curl gnupg2 ca-certificates lsb-release
+
+andrey@SERVER:~$ echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \ | sudo tee /etc/apt/sources.list.d/nginx.list
+
+andrey@SERVER:~$ curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
+
+andrey@SERVER:~$ sudo apt update
+
+andrey@SERVER:~$ sudo apt install nginx
+
+andrey@SERVER:~$ sudo systemctl stop apache2
+
+andrey@SERVER:~$ sudo systemctl start nginx.service
+_________________________________________________________________________________________________________________
+создать простую страницу, содержащую изображение, get и post формы,  файл для скачивания, форму file upload, установку cookie (например, средствами JS).
+
+andrey@SERVER:~$ sudo mkdir -p /var/www/tt_test.ru/html
+
+andrey@SERVER:~$ nano /var/www/tt_test.ru/html/index.html
+
+///////////////////////////////////////////////////////////////////////////////////
+<html>
+   <head>
+       <title>hello test</title>
+   </head>
+   <body>
+       <h1>hello test test</h1>
+ <form>
+   <p><input name="login"> <input type="password" name="pass"></p>
+   <p><input type="submit"></p>
+  </form>
+<form  target="area">
+   <p><input placeholder="TEXT" name="text">
+   <p><input type="submit" value="GO"></p>
+  </form>
+<a href="img/1.png" download=""><button class="btn">Download</button></a>
+<p><img src="/home/andrey/1.png" alt="sudo"></p>
+<form enctype="multipart/form-data" action="/upload.php" method="post">
+   <input type="hidden" name="MAX_FILE_SIZE" value="30000">
+   Send this file: <input name="userfile" type="file">
+  <input type="submit" value="Send File">
+</form>
+   </body>
+</html>
+
+///////////////////////////////////////////////////////////////////////////////////
+
+andrey@SERVER:~$ sudo mkdir -p /etc/nginx/sites-available/
+
+andrey@SERVER:~$ sudo cp /etc/nginx/conf.d/default.conf /etc/nginx/sites-available/tt_test.ru.conf
+-копируем конфигурацию.
+
+andrey@SERVER:~$ sudo nano /etc/nginx/sites-available/tt_test.ru.conf
+-редактируем скопированную конфигурацию.
+/////////////////////////////////////////////////////////////////////////////////
+server {
+
+listen 80 default_server;
+
+listen [::]:80;
+
+root /var/www/tt_test.ru/html;
+
+index index.html index.htm index.nginx-debian.html;
+
+server_name _ tt_test.ru www.tt_test.ru;
+
+location / {
+
+try_files $uri $uri/ =404;
+
+}
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+andrey@SERVER:~$ sudo ln -s /etc/nginx/sites-available/tt_test.ru.conf /etc/nginx/sites-enabled/
+-создаем символьные ссылки.
+
+andrey@SERVER:~$ sudo nano /etc/nginx/nginx.conf
+- инклудим конфигурацию (include /etc/nginx/sites-enabled/*.conf;)
+
+_________________________________________________________________________________________________________________
+Установить на сервере MySql (без Docker), 
+
+andrey@SERVER:~$ apt-get update
+andrey@SERVER:~$ sudo apt-get install wget -y
+andrey@SERVER:~$ sudo wget https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+andrey@SERVER:~$ sudo dpkg -i mysql-apt-config_0.8.10-1_all.deb && rm -f mysql-apt-config_0.8.10-1_all.deb
+andrey@SERVER:~$ sudo apt-get update
+andrey@SERVER:~$ sudo apt-get install mysql-community-server -y
+andrey@SERVER:~$ sudo systemctl status mysql
+
+
+средствами iptables закрыть к нему доступ (закрыть порт 3306), 
+
+andrey@SERVER:~$ sudo iptables -A INPUT -p tcp --dport 3306 -j REJECT
+
+проверить, что доступа нет.
+
+andrey@SERVER:~$ sudo iptables-save
+
+//////////////////////////////////////////////////////////////////////////////////
+*filter
+:INPUT ACCEPT [21:2437]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [61:7148]
+-A INPUT -s 192.168.0.108/32 -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 22 -j REJECT --reject-with icmp-port-unreachable
+-A INPUT -p tcp -m tcp --dport 3306 -j REJECT --reject-with icmp-port-unreachable
+//////////////////////////////////////////////////////////////////////////////////
+
+_________________________________________________________________________________________________________________
+Настроить ssh туннель для доступа с WORKSTATION через GATEWAY. 
+
+andrey@andrey-Satellite-C850-D3K:~$ ssh -tt -L localhost:9999:localhost:rey@192.168.0.108 ssh -L localhost:9999:localhost:3306 andrey@192.168.0.109
+_________________________________________________________________________________________________________________
+                                      Скрипты
+
+Сгенерировать набор файлов вида
+YYYY-mm-dd.csv
+по каждому дню за год с содержимым такого вида (числовые поля заполнить случайными  значениями):
+
+////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+start=1
+end=365
+
+for i in $(seq $start $end) 
+do
+cat > /home/andrey/testf1/$(date -I -d "$d - $i day").csv << EOF
+cite ; country ; date ; views ; clicks
+www.abc.com ; USA ; $(date -I -d "$d - $i day") ; $RANDOM  ; $RANDOM
+www.cba.com ; France  ; $(date -I -d "$d - $i day") ; $RANDOM  ; $RANDOM
+EOF
+done
+///////////////////////////////////////////////////////////////////////////////////
+_________________________________________________________________________________________________________________
+В условиях предыдущей задачи 
+    • Проверить, что все файлы за год присутствуют и нет лишних.
+///////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+start=1
+end=365
+tmp=0
+
+for i in $(seq $start $end) 
+do
+# проверка существования файла
+if [ -e /home/andrey/testf1/$(date -I -d "$d - $i day").csv ]
+then
+((tmp += 1))
+else
+echo "Ошибка нет файла" $(date -I -d "$d - $i day").csv
+fi
+done
+#кол-во найденых файлов = общему кол-ву файлов в каталоге
+[[ $tmp -eq $(find /home/andrey/testf1 -type f -name '*.csv' | wc -l) ]] && echo "Нет лишних файлов в каталоге" || echo "Присутствуют лишние файлы в каталоге"
+
+#кол-во найденых файлов = необходимому количеству
+[[ $tmp -eq $end ]] && echo "Все файлы за год присутствуют" || echo "Есть отсутствующие файлы за год"
+///////////////////////////////////////////////////////////////////////////////////
+_________________________________________________________________________________________________________________
+Во всех исходных файлах переставить дату на первое место и привести к виду dd/mm/YYYY:
+
+///////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+start=1
+end=365
+
+for i in $(seq $start $end) 
+do
+if [ -e /home/andrey/testf1/$(date -I -d "$d - $i day").csv ]
+then
+awk 'BEGIN{FS=";"} {print $3, FS, $2, FS, $1, FS, $4, FS, $5 }' /home/andrey/testf1/$(date -I -d "$d - $i day").csv > /home/andrey/testf1/tmp.csv
+sed s/$(date -I -d "$d - $i day")/$(date +%d:%m:%Y -d "$d - $i day")/g /home/andrey/testf1/tmp.csv > /home/andrey/testf1/$(date -I -d "$d - $i day").csv 
+else
+echo "Ошибка нет файла" $(date -I -d "$d - $i day").csv
+fi
+done
+rm /home/andrey/testf1/tmp.csv
+///////////////////////////////////////////////////////////////////////////////////
+_________________________________________________________________________________________________________________
+Сформировать набор файлов monday.csv, tuesday.txt и т.д. куда вывести содержимое всех исходных файлов отдельно по каждому дню недели. Строку заголовка вывести один раз. Исходные файлы удалить.
+
+///////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+start=1
+endW=7
+endY=365
+for i in $(seq $start $endW) 
+do
+cat > /home/andrey/testf1/$(date +%A -d "$d - $i day" ).csv << EOF
+date ; country ; cite ; views ; clicks
+EOF
+done
+
+for j in $(seq $start $endY)
+do
+ awk 'BEGIN{FS=";"} NR>1 {print $1, FS, $2, FS, $3, FS, $4, FS, $5 }' /home/andrey/testf1/$(date -I -d "$d - $j day").csv >> /home/andrey/testf1/$(date +%A -d "$d - $j day" ).csv
+rm /home/andrey/testf1/$(date -I -d "$d - $j day").csv
+done
+///////////////////////////////////////////////////////////////////////////////////
+_________________________________________________________________________________________________________________
+Вывести в отдельный файл содержимое всех файлов *.java из своего репозитория, в которых встречается ArrayList. 
+
+///////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+for i in $(find /home/andrey/ -name "*.java"); do
+ if grep -q ArrayList "$i"; then
+   cat "$i" >> /home/andrey/java.txt
+ fi 
+done
+///////////////////////////////////////////////////////////////////////////////////
+_________________________________________________________________________________________________________________
+Вывести содержимое каталога /etc (каждая строка с полным путем) затем заменить первые вхождения ‘/’ на “C:\”, остальные на ‘\’
+
+///////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+cd /etc
+shopt -s globstar
+for i in $(ls -d -1 "$PWD/"**/*); do
+    echo "$i" >> /home/andrey/test.txt
+done
+sed 's/\//C:\\/'  /home/andrey/test.txt >> /home/andrey/test2.txt
+sed 's/\//\\/g' /home/andrey/test2.txt
+///////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
